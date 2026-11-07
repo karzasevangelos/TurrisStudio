@@ -10,7 +10,7 @@
     <AssemblyName>TurrisStudio</AssemblyName>
     <RootNamespace>TurrisStudio</RootNamespace>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <Description>Turris Studio - TRYX cooler display controller</Description>
     <Copyright>Turris Studio contributors</Copyright>
     <Product>Turris Studio</Product>

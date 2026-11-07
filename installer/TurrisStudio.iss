@@ -5,7 +5,7 @@
 
 #define AppName "Turris Studio"
 #ifndef AppVersion
-  #define AppVersion "1.1.0"
+  #define AppVersion "1.1.1"
 #endif
 
 [Setup]
@@ -41,7 +41,7 @@ VersionInfoProductName={#AppName}
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Shortcuts:"; Flags: unchecked
+Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Shortcuts:"
 
 [Files]
 Source: "..\publish\release\*"; DestDir: "{app}"; Excludes: "*.pdb"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -59,7 +59,9 @@ Name: "{autodesktop}\Turris Studio"; Filename: "{app}\TurrisStudio.exe"; Tasks: 
 [Run]
 Filename: "{tmp}\PawnIO_setup.exe"; Parameters: "-install -silent"; StatusMsg: "Installing the sensor driver (PawnIO)..."; Flags: waituntilterminated; Check: NeedsPawnIO
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File ""{app}\tasks.ps1"" -AppPath ""{app}\TurrisStudio.exe"""; StatusMsg: "Setting up automatic start..."; Flags: runhidden waituntilterminated
-Filename: "{app}\TurrisStudio.exe"; Description: "Start Turris Studio now"; Flags: postinstall nowait skipifsilent
+; Start the background app right away (hidden in the tray, full sensor access), also for silent installs.
+Filename: "schtasks.exe"; Parameters: "/run /tn ""Turris Studio"""; StatusMsg: "Starting Turris Studio..."; Flags: runhidden waituntilterminated
+Filename: "{app}\TurrisStudio.exe"; Description: "Open Turris Studio now"; Flags: postinstall nowait skipifsilent
 
 [UninstallRun]
 Filename: "taskkill.exe"; Parameters: "/f /im TurrisStudio.exe"; Flags: runhidden waituntilterminated; RunOnceId: "StopApp"

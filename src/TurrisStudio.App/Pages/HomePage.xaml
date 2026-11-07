@@ -1,0 +1,86 @@
+<UserControl x:Class="TurrisStudio.Pages.HomePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:controls="clr-namespace:TurrisStudio.Controls">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="32,24,32,32">
+            <TextBlock Text="Dashboard" Style="{StaticResource PageTitle}" />
+            <TextBlock Text="Live view of your cooler screen. It keeps updating in the background even when this window is closed."
+                       Style="{StaticResource PageSubtitle}" />
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="*" MinWidth="300" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Live preview -->
+                <StackPanel Grid.Column="0">
+                    <controls:ScreenCanvas x:Name="Preview" Height="420" />
+                    <StackPanel Orientation="Horizontal" Margin="2,10,0,0">
+                        <ui:SymbolIcon Symbol="Video24" Margin="0,0,8,0" Opacity="0.8" />
+                        <TextBlock Text="Now on your cooler:" Opacity="0.7" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <TextBlock x:Name="PreviewCaption" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Status + quick controls -->
+                <StackPanel Grid.Column="2">
+                    <ui:Card Padding="18">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <ui:SymbolIcon x:Name="DeviceIcon" Symbol="PlugDisconnected24" FontSize="22" Margin="0,0,10,0" />
+                                <TextBlock x:Name="DeviceTitle" Text="TURRIS 620" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <TextBlock x:Name="DeviceStatus" Style="{StaticResource Muted}" FontSize="13" Text="Looking for the display..." />
+                            <Grid Margin="0,12,0,0" x:Name="DeviceDetails">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="Firmware" Style="{StaticResource Muted}" Margin="0,2,16,2" />
+                                <TextBlock Grid.Row="0" Grid.Column="1" x:Name="FirmwareText" Text="-" />
+                                <TextBlock Grid.Row="1" Text="Serial" Style="{StaticResource Muted}" Margin="0,2,16,2" />
+                                <TextBlock Grid.Row="1" Grid.Column="1" x:Name="SerialText" Text="-" />
+                                <TextBlock Grid.Row="2" Text="Now showing" Style="{StaticResource Muted}" Margin="0,2,16,2" />
+                                <TextBlock Grid.Row="2" Grid.Column="1" x:Name="MediaText" Text="-" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Grid.Row="3" Text="Sensors" Style="{StaticResource Muted}" Margin="0,2,16,2" />
+                                <TextBlock Grid.Row="3" Grid.Column="1" x:Name="SensorsText" Text="-" TextWrapping="Wrap" />
+                            </Grid>
+                        </StackPanel>
+                    </ui:Card>
+
+                    <ui:Card Padding="18" Margin="0,12,0,0">
+                        <StackPanel>
+                            <TextBlock Text="Quick controls" Style="{StaticResource SectionTitle}" />
+                            <ui:ToggleSwitch x:Name="OverlayToggle" Content="Show stats overlay" Click="OverlayToggle_Click" />
+                            <TextBlock Text="Brightness" Style="{StaticResource FieldLabel}" Margin="0,14,0,2" />
+                            <DockPanel>
+                                <TextBlock x:Name="BrightnessValue" DockPanel.Dock="Right" Width="40" TextAlignment="Right" VerticalAlignment="Center" Text="100%" />
+                                <Slider x:Name="BrightnessSlider" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True"
+                                        ValueChanged="BrightnessSlider_ValueChanged" PreviewMouseUp="BrightnessSlider_Commit" KeyUp="BrightnessSlider_Commit" />
+                            </DockPanel>
+                            <WrapPanel Margin="0,14,0,0">
+                                <ui:Button Content="Change media" Icon="{ui:SymbolIcon Image24}" Click="GoMedia_Click" Margin="0,0,8,8" />
+                                <ui:Button Content="Edit overlay" Icon="{ui:SymbolIcon PaintBrush24}" Click="GoDesigner_Click" Margin="0,0,8,8" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </ui:Card>
+                </StackPanel>
+            </Grid>
+
+            <!-- Stat tiles -->
+            <UniformGrid x:Name="Tiles" Columns="4" Margin="0,16,0,0" />
+
+            <ui:CardExpander Header="Activity log" Margin="0,16,0,0" Icon="{ui:SymbolIcon Pulse24}">
+                <TextBox x:Name="LogBox" IsReadOnly="True" Height="200" FontFamily="Consolas" FontSize="12"
+                         VerticalScrollBarVisibility="Auto" TextWrapping="NoWrap" />
+            </ui:CardExpander>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

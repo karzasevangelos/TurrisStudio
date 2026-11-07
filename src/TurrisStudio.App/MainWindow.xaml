@@ -1,0 +1,79 @@
+﻿<ui:FluentWindow x:Class="TurrisStudio.MainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 Title="Turris Studio"
+                 Width="1440" Height="900" MinWidth="1100" MinHeight="680"
+                 WindowStartupLocation="CenterScreen"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowBackdropType="Mica"
+                 WindowCornerPreference="Round"
+                 Icon="pack://application:,,,/Assets/app.png">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="Turris Studio" />
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="230" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Sidebar -->
+            <DockPanel Grid.Column="0" Margin="12,4,8,12">
+                <Border DockPanel.Dock="Bottom" CornerRadius="8" Padding="12,10" Margin="0,8,0,0"
+                        Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse x:Name="StatusDot" Width="10" Height="10" Fill="Orange" Margin="0,0,8,0" VerticalAlignment="Center" />
+                            <TextBlock x:Name="StatusTitle" Text="Searching" FontWeight="SemiBold" />
+                        </StackPanel>
+                        <TextBlock x:Name="StatusDetail" Style="{StaticResource Muted}" Margin="18,2,0,0" Text="Looking for the display..." />
+                    </StackPanel>
+                </Border>
+
+                <ListBox x:Name="Nav" SelectionChanged="Nav_SelectionChanged" BorderThickness="0" Background="Transparent">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                            <Setter Property="Padding" Value="12,10" />
+                            <Setter Property="Margin" Value="0,2" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBoxItem Tag="home">
+                        <StackPanel Orientation="Horizontal"><ui:SymbolIcon Symbol="Home24" Margin="0,0,12,0" /><TextBlock Text="Dashboard" VerticalAlignment="Center" /></StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="media">
+                        <StackPanel Orientation="Horizontal"><ui:SymbolIcon Symbol="Image24" Margin="0,0,12,0" /><TextBlock Text="Media" VerticalAlignment="Center" /></StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="designer">
+                        <StackPanel Orientation="Horizontal"><ui:SymbolIcon Symbol="PaintBrush24" Margin="0,0,12,0" /><TextBlock Text="Overlay designer" VerticalAlignment="Center" /></StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="display">
+                        <StackPanel Orientation="Horizontal"><ui:SymbolIcon Symbol="BrightnessHigh24" Margin="0,0,12,0" /><TextBlock Text="Display" VerticalAlignment="Center" /></StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="sensors">
+                        <StackPanel Orientation="Horizontal"><ui:SymbolIcon Symbol="Gauge24" Margin="0,0,12,0" /><TextBlock Text="Sensors" VerticalAlignment="Center" /></StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="settings">
+                        <StackPanel Orientation="Horizontal"><ui:SymbolIcon Symbol="Settings24" Margin="0,0,12,0" /><TextBlock Text="Settings" VerticalAlignment="Center" /></StackPanel>
+                    </ListBoxItem>
+                </ListBox>
+            </DockPanel>
+
+            <!-- Page area -->
+            <Border Grid.Column="1" CornerRadius="8,0,0,0" BorderThickness="1,1,0,0"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    Background="{DynamicResource LayerFillColorDefaultBrush}">
+                <Grid>
+                    <ContentControl x:Name="PageHost" />
+                    <ui:InfoBar x:Name="Toast" VerticalAlignment="Bottom" Margin="24" IsOpen="False" IsClosable="True" />
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>

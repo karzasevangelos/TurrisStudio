@@ -1,0 +1,197 @@
+<UserControl x:Class="TurrisStudio.Pages.DesignerPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:controls="clr-namespace:TurrisStudio.Controls">
+    <UserControl.Resources>
+        <Style x:Key="ToolButton" TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+            <Setter Property="Padding" Value="8" />
+            <Setter Property="Margin" Value="0,0,4,0" />
+        </Style>
+        <Style x:Key="AddButton" TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Margin" Value="0,0,0,6" />
+        </Style>
+        <Style x:Key="AlignButton" TargetType="RadioButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+            <Setter Property="Padding" Value="10,6" />
+            <Setter Property="Margin" Value="0,0,4,0" />
+            <Setter Property="GroupName" Value="Align" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="24,20,24,20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220" />
+            <ColumnDefinition Width="16" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="16" />
+            <ColumnDefinition Width="310" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ============ LEFT: layouts + widgets ============ -->
+        <DockPanel Grid.Column="0">
+            <StackPanel DockPanel.Dock="Top">
+                <TextBlock Text="Overlay designer" Style="{StaticResource PageTitle}" FontSize="24" />
+                <TextBlock Text="Layout" Style="{StaticResource FieldLabel}" />
+                <ComboBox x:Name="DesignBox" SelectionChanged="DesignBox_SelectionChanged" DisplayMemberPath="Name" />
+                <WrapPanel Margin="0,6,0,0">
+                    <ui:Button Style="{StaticResource ToolButton}" Icon="{ui:SymbolIcon Add24}" ToolTip="New empty layout" Click="NewDesign_Click" />
+                    <ui:Button Style="{StaticResource ToolButton}" Icon="{ui:SymbolIcon DocumentCopy24}" ToolTip="Duplicate layout" Click="DuplicateDesign_Click" />
+                    <ui:Button Style="{StaticResource ToolButton}" Icon="{ui:SymbolIcon Edit24}" ToolTip="Rename layout" Click="RenameDesign_Click" />
+                    <ui:Button Style="{StaticResource ToolButton}" Icon="{ui:SymbolIcon FolderOpen24}" ToolTip="Import layout file" Click="ImportDesign_Click" />
+                    <ui:Button Style="{StaticResource ToolButton}" Icon="{ui:SymbolIcon Save24}" ToolTip="Export layout file" Click="ExportDesign_Click" />
+                    <ui:Button Style="{StaticResource ToolButton}" Icon="{ui:SymbolIcon Delete24}" ToolTip="Delete layout" Click="DeleteDesign_Click" />
+                </WrapPanel>
+
+                <TextBlock Text="Add" Style="{StaticResource FieldLabel}" Margin="0,16,0,6" />
+                <ui:Button Style="{StaticResource AddButton}" Icon="{ui:SymbolIcon Temperature24}" Content="Sensor (big)" Click="AddMetric_Click" />
+                <ui:Button Style="{StaticResource AddButton}" Icon="{ui:SymbolIcon DataBarVertical24}" Content="Sensor (one line)" Click="AddCompact_Click" />
+                <ui:Button Style="{StaticResource AddButton}" Icon="{ui:SymbolIcon Clock24}" Content="Clock" Click="AddClock_Click" />
+                <ui:Button Style="{StaticResource AddButton}" Icon="{ui:SymbolIcon TextT24}" Content="Text" Click="AddText_Click" />
+                <ui:Button Style="{StaticResource AddButton}" Icon="{ui:SymbolIcon Tag24}" Content="Badge" Click="AddBadge_Click" />
+
+                <DockPanel Margin="0,14,0,6">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <ui:Button Style="{StaticResource ToolButton}" Icon="{ui:SymbolIcon Copy24}" ToolTip="Duplicate" Click="WidgetDuplicate_Click" />
+                        <ui:Button Style="{StaticResource ToolButton}" Icon="{ui:SymbolIcon Delete24}" ToolTip="Delete (Del)" Click="WidgetDelete_Click" Margin="0" />
+                    </StackPanel>
+                    <TextBlock Text="On screen" Style="{StaticResource FieldLabel}" Margin="0" VerticalAlignment="Center" />
+                </DockPanel>
+            </StackPanel>
+            <ListBox x:Name="WidgetList" SelectionChanged="WidgetList_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel>
+                            <CheckBox DockPanel.Dock="Right" IsChecked="{Binding Visible}" ToolTip="Show / hide" MinWidth="0" Margin="6,0,0,0" />
+                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+
+        <!-- ============ CENTER: canvas ============ -->
+        <DockPanel Grid.Column="2">
+            <ui:Card DockPanel.Dock="Top" Padding="12,8" Margin="0,0,0,12">
+                <DockPanel LastChildFill="False">
+                    <ui:ToggleSwitch DockPanel.Dock="Left" x:Name="GridToggle" Content="Grid" Click="GridToggle_Click" Margin="0,0,18,0" />
+                    <ui:ToggleSwitch DockPanel.Dock="Left" x:Name="FahrenheitToggle" Content="°F" Click="Fahrenheit_Click" Margin="0,0,18,0" />
+                    <TextBlock DockPanel.Dock="Left" x:Name="PreviewLabel" Text="Preview with" VerticalAlignment="Center" Margin="0,0,8,0" Style="{StaticResource Muted}" FontSize="13" />
+                    <ComboBox DockPanel.Dock="Left" x:Name="PreviewBox" Width="220" DisplayMemberPath="DisplayName" SelectionChanged="PreviewBox_SelectionChanged"
+                              ToolTip="Which of your media files to show behind the overlay here" />
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Ellipse x:Name="SyncDot" Width="9" Height="9" Fill="Orange" Margin="0,0,8,0" VerticalAlignment="Center" />
+                        <TextBlock x:Name="SyncText" VerticalAlignment="Center" FontSize="13" Text="Saved" />
+                    </StackPanel>
+                </DockPanel>
+            </ui:Card>
+            <StackPanel DockPanel.Dock="Bottom" Margin="2,10,0,0">
+                <TextBlock x:Name="NowOnCoolerText" FontSize="13" Margin="0,0,0,4" />
+                <TextBlock Style="{StaticResource Muted}" Text="Drag to move · drag the blue corner to resize · arrow keys nudge · Del removes" />
+            </StackPanel>
+            <Grid>
+                <controls:ScreenCanvas x:Name="Canvas" VerticalAlignment="Top" />
+            </Grid>
+        </DockPanel>
+
+        <!-- ============ RIGHT: simple properties ============ -->
+        <ScrollViewer Grid.Column="4" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <TextBlock x:Name="NoSelection" Style="{StaticResource Muted}" FontSize="13" Margin="0,8,0,0"
+                           Text="Click a widget on the screen to edit it, or add one on the left." />
+
+                <ui:Card x:Name="EditPanel" Padding="16" Visibility="Collapsed">
+                    <StackPanel>
+                        <TextBlock x:Name="EditTitle" Text="Sensor" Style="{StaticResource SectionTitle}" />
+
+                        <!-- Sensor widgets -->
+                        <StackPanel x:Name="SensorSection">
+                            <TextBlock Text="Sensor" Style="{StaticResource FieldLabel}" Margin="0,0,0,4" />
+                            <controls:SensorPicker x:Name="SensorPicker" />
+                            <TextBlock Text="Title" Style="{StaticResource FieldLabel}" />
+                            <TextBox x:Name="TitleBox" TextChanged="TitleBox_TextChanged" />
+                            <WrapPanel Margin="0,10,0,0">
+                                <CheckBox x:Name="ShowTitleCheck" Content="Show title" Click="ShowTitle_Click" Margin="0,0,16,0" />
+                                <CheckBox x:Name="ShowUnitCheck" Content="Show unit" Click="ShowUnit_Click" Margin="0,0,16,0" />
+                            </WrapPanel>
+                            <TextBlock Text="Decimals" Style="{StaticResource FieldLabel}" />
+                            <ComboBox x:Name="DecimalsBox" SelectionChanged="Decimals_Changed">
+                                <ComboBoxItem Content="52" /><ComboBoxItem Content="52.3" /><ComboBoxItem Content="52.34" />
+                            </ComboBox>
+                        </StackPanel>
+
+                        <!-- Clock -->
+                        <StackPanel x:Name="ClockSection">
+                            <TextBlock Text="Time" Style="{StaticResource FieldLabel}" Margin="0,0,0,4" />
+                            <ComboBox x:Name="TimeFormatBox" SelectionChanged="TimeFormat_Changed" />
+                            <CheckBox x:Name="ShowDateCheck" Content="Show date" Click="ShowDate_Click" Margin="0,10,0,0" />
+                            <ComboBox x:Name="DateFormatBox" SelectionChanged="DateFormat_Changed" Margin="0,6,0,0" />
+                        </StackPanel>
+
+                        <!-- Text / badge -->
+                        <StackPanel x:Name="TextSection">
+                            <TextBlock Text="Text" Style="{StaticResource FieldLabel}" Margin="0,0,0,4" />
+                            <TextBox x:Name="TextInput" TextChanged="TextBox_TextChanged" />
+                            <TextBlock Text="Background" Style="{StaticResource FieldLabel}" />
+                            <ComboBox x:Name="BackgroundBox" SelectionChanged="Background_Changed">
+                                <ComboBoxItem Content="None" /><ComboBoxItem Content="Solid color" /><ComboBoxItem Content="Gradient (top to bottom)" /><ComboBoxItem Content="Gradient (left to right)" />
+                            </ComboBox>
+                            <Grid x:Name="BackgroundColors" Margin="0,4,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="8" /><ColumnDefinition /></Grid.ColumnDefinitions>
+                                <controls:ColorBox x:Name="BgColorBox" Grid.Column="0" />
+                                <controls:ColorBox x:Name="BgColor2Box" Grid.Column="2" />
+                            </Grid>
+                        </StackPanel>
+
+                        <Separator Margin="0,16,0,4" />
+
+                        <!-- Look: shared by all widgets -->
+                        <TextBlock Text="Size" Style="{StaticResource FieldLabel}" />
+                        <DockPanel>
+                            <TextBlock x:Name="SizeText" DockPanel.Dock="Right" Width="48" TextAlignment="Right" VerticalAlignment="Center" />
+                            <Slider x:Name="SizeSlider" Minimum="12" Maximum="300" ValueChanged="Size_Changed" VerticalAlignment="Center" />
+                        </DockPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="8" /><ColumnDefinition /></Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Color" Style="{StaticResource FieldLabel}" />
+                                <controls:ColorBox x:Name="ColorBox" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" x:Name="AccentSection">
+                                <TextBlock x:Name="AccentLabel" Text="Title color" Style="{StaticResource FieldLabel}" />
+                                <controls:ColorBox x:Name="AccentColorBox" />
+                            </StackPanel>
+                        </Grid>
+                        <TextBlock Text="Font" Style="{StaticResource FieldLabel}" />
+                        <ComboBox x:Name="FontBox" SelectionChanged="Font_Changed" />
+                        <TextBlock Text="Align" Style="{StaticResource FieldLabel}" />
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton x:Name="AlignLeft" Style="{StaticResource AlignButton}" Content="Left" Click="Align_Click" />
+                            <RadioButton x:Name="AlignCenter" Style="{StaticResource AlignButton}" Content="Center" Click="Align_Click" />
+                            <RadioButton x:Name="AlignRight" Style="{StaticResource AlignButton}" Content="Right" Click="Align_Click" />
+                        </StackPanel>
+
+                        <Expander Header="Exact position" Margin="0,16,0,0">
+                            <StackPanel Margin="0,6,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition /><ColumnDefinition Width="6" /><ColumnDefinition /><ColumnDefinition Width="6" /><ColumnDefinition /><ColumnDefinition Width="6" /><ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0"><TextBlock Text="X" Style="{StaticResource FieldLabel}" /><TextBox x:Name="XBox" Text="{Binding X, UpdateSourceTrigger=PropertyChanged}" /></StackPanel>
+                                    <StackPanel Grid.Column="2"><TextBlock Text="Y" Style="{StaticResource FieldLabel}" /><TextBox Text="{Binding Y, UpdateSourceTrigger=PropertyChanged}" /></StackPanel>
+                                    <StackPanel Grid.Column="4"><TextBlock Text="W" Style="{StaticResource FieldLabel}" /><TextBox Text="{Binding Width, UpdateSourceTrigger=PropertyChanged}" /></StackPanel>
+                                    <StackPanel Grid.Column="6"><TextBlock Text="H" Style="{StaticResource FieldLabel}" /><TextBox Text="{Binding Height, UpdateSourceTrigger=PropertyChanged}" /></StackPanel>
+                                </Grid>
+                                <WrapPanel Margin="0,8,0,0">
+                                    <ui:Button Content="Center left-right" Click="CenterH_Click" Padding="10,5" Margin="0,0,6,6" />
+                                    <ui:Button Content="Center top-bottom" Click="CenterV_Click" Padding="10,5" Margin="0,0,6,6" />
+                                </WrapPanel>
+                            </StackPanel>
+                        </Expander>
+                    </StackPanel>
+                </ui:Card>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

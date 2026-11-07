@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>TurrisStudio</AssemblyName>
+    <RootNamespace>TurrisStudio</RootNamespace>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <Version>1.1.0</Version>
+    <Description>Turris Studio - TRYX cooler display controller</Description>
+    <Copyright>Turris Studio contributors</Copyright>
+    <Product>Turris Studio</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- WPF and WinForms both define Application/MessageBox/etc.; only use WinForms explicitly (tray icon). -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WPF-UI" Version="3.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TurrisStudio.Core\TurrisStudio.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Fonts\*.ttf" />
+    <Resource Include="Assets\app.png" />
+    <Content Include="Assets\app.ico" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

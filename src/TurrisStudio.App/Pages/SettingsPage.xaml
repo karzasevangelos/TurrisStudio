@@ -1,0 +1,82 @@
+<UserControl x:Class="TurrisStudio.Pages.SettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="32,24,32,32" MaxWidth="860" HorizontalAlignment="Left">
+            <TextBlock Text="Settings" Style="{StaticResource PageTitle}" />
+            <TextBlock Text="Startup and app behaviour." Style="{StaticResource PageSubtitle}" />
+
+            <TextBlock Text="Startup" Style="{StaticResource SectionTitle}" />
+            <ui:CardControl Icon="{ui:SymbolIcon Open24}" Margin="0,0,0,8">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <TextBlock Text="Start with Windows" FontWeight="SemiBold" />
+                        <TextBlock Text="Feed the screen automatically after you sign in. No need to open the app." Style="{StaticResource Muted}" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ui:ToggleSwitch x:Name="StartupToggle" Click="Changed" />
+            </ui:CardControl>
+            <ui:CardControl Icon="{ui:SymbolIcon EyeOff24}" Margin="0,0,0,8">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <TextBlock Text="Start hidden in the tray" FontWeight="SemiBold" />
+                        <TextBlock Text="When starting with Windows, don't open the window" Style="{StaticResource Muted}" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ui:ToggleSwitch x:Name="MinimizedToggle" Click="Changed" />
+            </ui:CardControl>
+            <ui:CardControl Icon="{ui:SymbolIcon Dismiss24}" Margin="0,0,0,8">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <TextBlock Text="Closing the window keeps it running" FontWeight="SemiBold" />
+                        <TextBlock Text="The ✕ button hides to the tray. Use Exit in the tray menu to quit." Style="{StaticResource Muted}" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ui:ToggleSwitch x:Name="TrayToggle" Click="Changed" />
+            </ui:CardControl>
+
+            <TextBlock Text="Sensors" Style="{StaticResource SectionTitle}" Margin="0,16,0,10" />
+            <ui:Card Padding="16" Margin="0,0,0,8">
+                <StackPanel>
+                    <TextBlock Text="Where readings come from" FontWeight="SemiBold" />
+                    <TextBlock x:Name="SensorStatus" Style="{StaticResource Muted}" Margin="0,4,0,0" TextWrapping="Wrap" />
+                </StackPanel>
+            </ui:Card>
+            <ui:CardControl Icon="{ui:SymbolIcon Temperature24}" Margin="0,0,0,8">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <TextBlock Text="Always use the built-in sensor reader" FontWeight="SemiBold" />
+                        <TextBlock Text="Off: HWiNFO is used when it's running (more sensors), the built-in reader otherwise." Style="{StaticResource Muted}" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ui:ToggleSwitch x:Name="BuiltInToggle" Click="Changed" />
+            </ui:CardControl>
+
+            <TextBlock Text="Media conversion" Style="{StaticResource SectionTitle}" Margin="0,16,0,10" />
+            <ui:Card Padding="16">
+                <StackPanel>
+                    <TextBlock Text="FFmpeg folder" FontWeight="SemiBold" />
+                    <TextBlock x:Name="FfmpegStatus" Style="{StaticResource Muted}" Margin="0,2,0,8" />
+                    <DockPanel>
+                        <ui:Button DockPanel.Dock="Right" Content="Browse..." Click="BrowseFfmpeg_Click" Margin="8,0,0,0" />
+                        <ui:TextBox x:Name="FfmpegBox" PlaceholderText="Auto-detect (PATH or C:\ffmpeg\bin)" TextChanged="FfmpegBox_TextChanged" />
+                    </DockPanel>
+                </StackPanel>
+            </ui:Card>
+
+            <TextBlock Text="About" Style="{StaticResource SectionTitle}" Margin="0,16,0,10" />
+            <ui:Card Padding="16">
+                <StackPanel>
+                    <TextBlock x:Name="VersionText" Text="Turris Studio" FontWeight="SemiBold" />
+                    <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,0"
+                               Text="A lightweight controller for the TRYX Turris 620 and Stage 360 cooler displays. Protocol details are based on the MIT-licensed Tryx-Linux-GUI project; built-in sensors use LibreHardwareMonitor (MPL 2.0); media conversion uses FFmpeg. Not affiliated with TRYX." TextWrapping="Wrap" />
+                    <TextBlock x:Name="PathsText" Style="{StaticResource Muted}" Margin="0,8,0,0" />
+                    <WrapPanel Margin="0,10,0,0">
+                        <ui:Button Content="Open settings folder" Icon="{ui:SymbolIcon Folder24}" Click="OpenFolder_Click" />
+                    </WrapPanel>
+                </StackPanel>
+            </ui:Card>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

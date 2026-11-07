@@ -1,0 +1,154 @@
+<UserControl x:Class="TurrisStudio.Pages.MediaPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             AllowDrop="True" Drop="OnDrop" DragOver="OnDragOver">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="32,24,32,32">
+                <TextBlock Text="Media" Style="{StaticResource PageTitle}" />
+                <TextBlock x:Name="SubtitleText" Text="Drop GIFs, videos or images here. They're converted to fit the screen, uploaded to the cooler, and kept in your library."
+                           Style="{StaticResource PageSubtitle}" />
+
+                <!-- Screen layout (dual-screen coolers) -->
+                <ui:Card x:Name="LayoutCard" Padding="16,12" Margin="0,0,0,12" Visibility="Collapsed">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Left" Text="Screens" VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,0,20,0" />
+                        <RadioButton x:Name="FullModeRadio" GroupName="ScreenMode" Content="One picture across both screens" Margin="0,0,24,0" Checked="ScreenMode_Changed" />
+                        <RadioButton x:Name="SplitModeRadio" GroupName="ScreenMode" Content="A different picture on each screen" Checked="ScreenMode_Changed" />
+                    </DockPanel>
+                </ui:Card>
+
+                <!-- Now showing -->
+                <ui:Card Padding="12" Margin="0,0,0,12">
+                    <DockPanel>
+                        <Border DockPanel.Dock="Left" Width="160" Height="90" CornerRadius="6" ClipToBounds="True" Background="#111" Margin="0,0,16,0">
+                            <Image x:Name="NowThumb" Stretch="UniformToFill" />
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="NOW ON YOUR COOLER" FontSize="11" FontWeight="Bold" Opacity="0.6" />
+                            <TextBlock x:Name="NowName" FontSize="20" FontWeight="SemiBold" Margin="0,2,0,0" TextTrimming="CharacterEllipsis" />
+                            <TextBlock x:Name="NowDetail" Style="{StaticResource Muted}" FontSize="13" Margin="0,2,0,0" />
+                        </StackPanel>
+                    </DockPanel>
+                </ui:Card>
+
+                <!-- Toolbar -->
+                <ui:Card Padding="16,12">
+                    <DockPanel LastChildFill="False">
+                        <ui:Button DockPanel.Dock="Left" Appearance="Primary" Content="Add files" Icon="{ui:SymbolIcon Add24}" Click="AddFiles_Click" />
+                        <ui:Button DockPanel.Dock="Left" Margin="8,0,0,0" Content="Refresh cooler list" Icon="{ui:SymbolIcon ArrowSync24}" Click="Refresh_Click" />
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                            <TextBlock Text="Playback" VerticalAlignment="Center" Margin="0,0,10,0" Style="{StaticResource Muted}" FontSize="13" />
+                            <ComboBox x:Name="PlayModeBox" Width="230" SelectionChanged="PlayMode_Changed">
+                                <ComboBoxItem Content="Repeat the selected file" />
+                                <ComboBoxItem Content="Loop through all files" />
+                                <ComboBoxItem Content="Shuffle all files" />
+                            </ComboBox>
+                        </StackPanel>
+                    </DockPanel>
+                </ui:Card>
+
+                <!-- Progress -->
+                <ui:Card x:Name="ProgressCard" Padding="16,12" Margin="0,12,0,0" Visibility="Collapsed">
+                    <StackPanel>
+                        <DockPanel>
+                            <ui:Button DockPanel.Dock="Right" Content="Cancel" Click="Cancel_Click" Padding="10,4" />
+                            <TextBlock x:Name="ProgressText" Text="Converting..." VerticalAlignment="Center" FontWeight="SemiBold" />
+                        </DockPanel>
+                        <ProgressBar x:Name="ProgressBar" Height="6" Margin="0,10,0,0" Minimum="0" Maximum="1" />
+                    </StackPanel>
+                </ui:Card>
+
+                <TextBlock Text="Your library" Style="{StaticResource SectionTitle}" Margin="0,24,0,10" />
+                <TextBlock x:Name="EmptyHint" Style="{StaticResource Muted}" FontSize="13"
+                           Text="No media yet. Click “Add files” or drag files onto this page." />
+                <ItemsControl x:Name="LibraryList">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ui:Card Width="300" Margin="0,0,14,14" Padding="0">
+                                <StackPanel>
+                                    <Grid Height="169">
+                                        <Border CornerRadius="8,8,0,0" ClipToBounds="True" Background="#111">
+                                            <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" />
+                                        </Border>
+                                        <Border Background="#CC0078D4" CornerRadius="4" Padding="8,3" Margin="8" HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                Visibility="{Binding IsShowing, Converter={StaticResource BoolToVis}}">
+                                            <TextBlock Text="ON SCREEN" Foreground="White" FontSize="11" FontWeight="Bold" />
+                                        </Border>
+                                        <Border Background="#99000000" CornerRadius="4" Padding="8,3" Margin="8" HorizontalAlignment="Right" VerticalAlignment="Top">
+                                            <TextBlock Text="{Binding KindText}" Foreground="White" FontSize="11" FontWeight="SemiBold" />
+                                        </Border>
+                                    </Grid>
+                                    <StackPanel Margin="14,10,14,14">
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" ToolTip="{Binding Source}" />
+                                        <TextBlock Text="{Binding StatusText}" Style="{StaticResource Muted}" Margin="0,2,0,8" />
+                                        <DockPanel>
+                                            <ComboBox DockPanel.Dock="Right" Width="96" SelectedIndex="{Binding FitIndex}" ToolTip="How the media fills the screen">
+                                                <ComboBoxItem Content="Fill" />
+                                                <ComboBoxItem Content="Fit" />
+                                                <ComboBoxItem Content="Stretch" />
+                                            </ComboBox>
+                                            <ui:Button Appearance="Primary" Content="Show" Icon="{ui:SymbolIcon Play24}" Click="Show_Click" Tag="{Binding}" Margin="0,0,6,0"
+                                                       Visibility="{Binding SingleVisibility}" />
+                                            <ui:Button Appearance="Primary" Content="Left" Click="ShowLeft_Click" Tag="{Binding}" Margin="0,0,4,0" Padding="10,6"
+                                                       Visibility="{Binding SplitVisibility}" ToolTip="Show on the left screen" />
+                                            <ui:Button Appearance="Primary" Content="Right" Click="ShowRight_Click" Tag="{Binding}" Margin="0,0,6,0" Padding="10,6"
+                                                       Visibility="{Binding SplitVisibility}" ToolTip="Show on the right screen" />
+                                            <ui:Button Icon="{ui:SymbolIcon ArrowCounterclockwise24}" ToolTip="Rotate 90°" Click="Rotate_Click" Tag="{Binding}" Padding="8" Margin="0,0,6,0" />
+                                            <ui:Button Icon="{ui:SymbolIcon Delete24}" ToolTip="Remove from library" Click="Remove_Click" Tag="{Binding}" Padding="8" HorizontalAlignment="Left" />
+                                        </DockPanel>
+                                    </StackPanel>
+                                </StackPanel>
+                            </ui:Card>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <TextBlock Text="Stored on the cooler" Style="{StaticResource SectionTitle}" Margin="0,20,0,4" />
+                <TextBlock Style="{StaticResource Muted}" Margin="0,0,0,10" FontSize="13"
+                           Text="Files saved on the cooler itself. Presets come with the cooler and can't be deleted." />
+                <ItemsControl x:Name="DeviceList">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border CornerRadius="6" Padding="14,8" Margin="0,0,0,6"
+                                    Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+                                <DockPanel>
+                                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                        <ui:Button Content="Show" Icon="{ui:SymbolIcon Play24}" Click="ShowDevice_Click" Tag="{Binding}" Margin="0,0,6,0"
+                                                   Visibility="{Binding SingleVisibility}" />
+                                        <ui:Button Content="Left" Click="ShowDeviceLeft_Click" Tag="{Binding}" Margin="0,0,4,0" Visibility="{Binding SplitVisibility}" />
+                                        <ui:Button Content="Right" Click="ShowDeviceRight_Click" Tag="{Binding}" Margin="0,0,6,0" Visibility="{Binding SplitVisibility}" />
+                                        <ui:Button Icon="{ui:SymbolIcon Delete24}" Click="DeleteDevice_Click" Tag="{Binding}" Padding="8"
+                                                   IsEnabled="{Binding CanDelete}" ToolTip="Delete from the cooler" />
+                                    </StackPanel>
+                                    <ui:SymbolIcon DockPanel.Dock="Left" Symbol="{Binding Icon}" Margin="0,0,12,0" />
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding Detail}" Style="{StaticResource Muted}" />
+                                    </StackPanel>
+                                </DockPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <TextBlock x:Name="DeviceHint" Style="{StaticResource Muted}" FontSize="13" Text="Connect the cooler to see its files." />
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Drop overlay -->
+        <Border x:Name="DropOverlay" Background="#990078D4" Visibility="Collapsed" IsHitTestVisible="False">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ui:SymbolIcon Symbol="ArrowUpload24" FontSize="64" Foreground="White" HorizontalAlignment="Center" />
+                <TextBlock Text="Drop to add to your library" Foreground="White" FontSize="22" FontWeight="SemiBold" Margin="0,12,0,0" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
